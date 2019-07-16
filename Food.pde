@@ -3,14 +3,17 @@ public class Food{
  private int scale = 1;
  public boolean bigFood = false;
  private int smallFoodEaten = 0;
+ private int countDown = 0;
  public Food(int size){
    this.scale = size;
  }
  
  public void put(){
    this.smallFoodEaten ++;
-   if( this.smallFoodEaten == 10 )
+   if( this.smallFoodEaten == 10 ){
      this.bigFood = true;
+     this.countDown = 15 * 6;
+   }
    if( this.smallFoodEaten == 11 ){
     this.smallFoodEaten = 0;
     this.bigFood = false;
@@ -25,6 +28,17 @@ public class Food{
  public void put(int x, int y){
    this.x = x;
    this.y = y;
+ }
+
+ public void Update(){
+   if( this.bigFood )
+    this.countDown--;
+   if( this.countDown == 0 && this.bigFood ){
+    this.bigFood = false;
+    this.smallFoodEaten = -1;
+    this.put();
+   }
+   this.Show();
  }
  
  public void Show(){

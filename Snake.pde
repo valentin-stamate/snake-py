@@ -36,8 +36,10 @@ public class Snake{
     this.teleport();
     this.checkFood();
 
-    if( this.checkCollision() )
-      print("Fuck");
+    if( this.checkCollision() ){
+      print("Fuck !!!!!!   ");
+      score.resetScore();
+    }
     this.Show();
   }
 
@@ -56,8 +58,10 @@ public class Snake{
     int headY = this.tail.get(0).y;
     
     for(int i = 1; i < this.tail.size(); i++)
-      if(headX == this.tail.get(i).x && headY == this.tail.get(i).y)
+      if(headX == this.tail.get(i).x && headY == this.tail.get(i).y){
         this.tail.subList(i, this.tail.size()).clear();
+        return true;
+      }
     return false;
   }
 
@@ -100,7 +104,7 @@ public class Snake{
       this.tail.get(0).x = width - 20;
     if(y >= height)
       this.tail.get(0).y = 0;
-    else if(y < 0)
+    else if(y < 20)
       this.tail.get(0).y = height - 20;
 
   }
@@ -110,12 +114,17 @@ public class Snake{
     int y = this.tail.get(0).y;
 
     if( (x == food.x || x == food.x + 20 && food.bigFood) && (y == food.y || y == food.y + 20 && food.bigFood) ){
-      this.tailPlus += 1;
 
-      if( food.bigFood )
+      if( !food.bigFood ){
+        this.tailPlus += 1;
+        score.addScore( 3 );
+      }
+      else {
         this.tailPlus += 3;
+        score.addScore( 7 );
+      }
       
-      //this.add( this.oldX, this.oldY );
+      
       food.put();
       return true;
     }
