@@ -1,54 +1,56 @@
 public class Food{
- private int x, y;
- private int scale = 1;
- public boolean bigFood = false;
- private int smallFoodEaten = 0;
- private int countDown = 0;
- public Food(int size){
-   this.scale = size;
- }
- 
- public void put(){
-   this.smallFoodEaten ++;
-   if( this.smallFoodEaten == 10 ){
-     this.bigFood = true;
-     this.countDown = 15 * 6;
-   }
-   if( this.smallFoodEaten == 11 ){
-    this.smallFoodEaten = 0;
-    this.bigFood = false;
+  private int x = 1, y = 1;
+  public boolean bonus = false;
+  private int bonusCount = 0;
+
+  public void put(){
+    a[ this.y ][ this.x ] = '0';
+
+    if( this.bonus ){
+      this.bonus = false;
+      a[ this.y + 1 ][ this.x ] = '0';
+      a[ this.y + 1 ][ this.x + 1 ] = '0';
+      a[ this.y ][ this.x + 1 ] = '0';
+    }
+
+    this.bonusCount ++;
+    
+    if(this.bonusCount == 9){
+      this.bonus = true;
+      this.bonusCount = 1;
+    }
+
+    int i = (int)random(0, 31);
+    int j = (int)random(1, 24);
+    /// inneficient way but works
+    while( a[ j ][ i ] == 'X' ){
+      i = (int)random(0, 31);
+      j = (int)random(1, 24);
+    }
+
+    this.x = i;
+    this.y = j;
+
+    a[ j ][ i ] = 'O';
+    if( this.bonus ) {
+      a[ j + 1 ][ i ] = 'O';
+      a[ j + 1 ][ i + 1 ] = 'O';
+      a[ j ][ i + 1 ] = 'O';
+    }
   }
 
-   int i = ((int)random(0, width) / this.scale ) * this.scale;
-   int j = ((int)random(0, height) / this.scale ) * this.scale;
-   this.x = i;
-   this.y = j;
- }
+  public void update(){
+    this.show();
+  }
  
- public void put(int x, int y){
-   this.x = x;
-   this.y = y;
- }
+  public void show(){
+    stroke(20);
+    strokeWeight(1);
+    fill(250, 90, 90);
+    if( !this.bonus )
+      rect(this.x * sc, this.y * sc, sc, sc);
+    else
+      rect(this.x * sc, this.y * sc, sc * 2, sc * 2);
+  }
 
- public void Update(){
-   if( this.bigFood )
-    this.countDown--;
-   if( this.countDown == 0 && this.bigFood ){
-    this.bigFood = false;
-    this.smallFoodEaten = -1;
-    this.put();
-   }
-   this.Show();
- }
- 
- public void Show(){
-   stroke(20);
-   strokeWeight(1);
-   fill(250, 90, 90);//#fa5a5a
-   if( this.bigFood )
-    rect(this.x , this.y, this.scale, this.scale);
-   if( this.bigFood )  rect(this.x , this.y, 2 * this.scale, 2 * this.scale);
-   else rect(this.x , this.y, this.scale, this.scale);
- }
- 
 }

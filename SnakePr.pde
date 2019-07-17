@@ -2,49 +2,64 @@ import java.util.ArrayList;
 import java.util.List;
 import processing.sound.*;
 
-SoundFile backSound;
+static int sc = 20;
 
 Snake snake;
 Food food;
-Score score;
-
-static int scale = 20;
-boolean snakeChangeDir = false;
 
 void setup(){
-  size(640, 500);// + 20 for topbar
-  frameRate(15);
+  size(640, 500);// + 21 for topbar
+  frameRate( 60 );
   background( 20 );
 
-  //backSound = new SoundFile(this, "backgroundAudio.mp3");
-  //backSound.loop();
-  //backSound.rate(1);
-  //backSound.amp(0.75);
-
-  snake = new Snake(120, 40, scale);
-  score = new Score();
-
-  snake.add( 100, 40 );
-  snake.add( 80, 40 );
-  snake.add( 60, 40 );
-  snake.add( 40, 40 );
-  snake.add( 20, 40 );
-  snake.add( 0, 40 );
-  food = new Food( scale );
+  snake = new Snake();
+  food = new Food();
   food.put();
+
 }
 
 void draw(){
   background( 20 );
   topBar();
+  food.update();
+  snake.update();
+  
+}
 
-  snake.Update();
-  food.Update();
-  score.Update();
-  if( score.lifes == 0 ){
-    gameOver();
-    noLoop();
+void representMatrix(){
+  for(int i = 0; i < 25; i++){
+    for(int j = 0; j < 32; j++){
+      stroke( 20 );
+      strokeWeight(1);
+      if(a[i][j] != '0')
+        fill( 7 );
+      else
+        fill( 255 );
+      rect(j * sc, i * sc, sc, sc);
+    }
   }
+  noLoop();
+}
+
+void showMatrix(){
+  for(int i = 0; i < 25; i++){
+    for(int j = 0; j < 32; j++){
+      print( a[i][j] + " " );
+    }println();
+  }
+  noLoop();
+}
+
+void keyPressed(){
+  if(keyCode == LEFT && snake.getDirX() != 1)
+    snake.changeDirection( -1, 0 );
+  else if(keyCode == UP && snake.getDirY() != 1)
+    snake.changeDirection( 0, -1 );
+  else if(keyCode == RIGHT && snake.getDirX() != -1)
+    snake.changeDirection( 1, 0 );
+  else if(keyCode == DOWN && snake.getDirY() != -1)
+    snake.changeDirection( 0, 1 );
+
 }
 
 void topBar(){
@@ -52,30 +67,4 @@ void topBar(){
   rect(0, 0, width, 21);
 }
 
-void gameOver(){
-  textSize(60);
-  fill(255);
-  //translate( 25, 25 );
-  text( "GAME OVER", 150, height / 2);
-}
 
-void keyPressed(){
-  if( !snakeChangeDir ){
-    if(keyCode == LEFT && snake.getDirX() != 1){
-      snakeChangeDir = true;
-      snake.direction("LEFT");
-    }
-    else if(keyCode == UP && snake.getDirY() != 1){
-      snakeChangeDir = true;  
-      snake.direction("UP");
-    }
-    else if(keyCode == RIGHT && snake.getDirX() != -1){
-      snakeChangeDir = true;
-      snake.direction("RIGHT");
-    }
-    else if(keyCode == DOWN && snake.getDirY() != -1){
-      snakeChangeDir = true;  
-      snake.direction("DOWN");
-    }
-  }
-}

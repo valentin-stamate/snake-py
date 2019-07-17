@@ -1,72 +1,104 @@
 public class Snake{
-  private List<Tail> tail = new ArrayList<Tail>();
-  private int scale;
-  private int directionX = 1;
-  private int directionY = 0;
-  private int oldX, oldY;
+  private List<Tail> tail;
+  private int directionX, directionY;
+  public boolean dirIsChanged = false;
   private int tailPlus = 0;
-  public Snake(int x, int y, int scale){
-    this.add( x, y);
-    this.scale = scale;
+
+  Snake(){
+    tail = new ArrayList<Tail>();
+    tail.add( new Tail( 4, 6 ) );
+    tail.add( new Tail( 3, 6 ) );
+    tail.add( new Tail( 2, 6 ) );
+    for(int i = 0; i < this.tail.size(); i++)
+      a[ this.tail.get(i).y ][ this.tail.get(i).x ] = 'X';
+    this.directionX = 1;
+    this.directionY = 0;
   }
 
-  public void Update(){
-    oldX = this.tail.get(0).x;
-    oldY = this.tail.get(0).y;
+  public void update(){
+    if( frameCount % 5 == 0 ){
 
-    this.tail.get(0).x += this.directionX * this.scale;
-    this.tail.get(0).y += this.directionY * this.scale;
+      int newX = this.tail.get(0).x + this.directionX;
+      int newY = this.tail.get(0).y + this.directionY;
 
-    for(int i = 1; i < this.tail.size(); i++){
-      int currentX = this.tail.get(i).x;
-      int currentY = this.tail.get(i).y;
-      this.tail.get(i).x = oldX;
-      this.tail.get(i).y = oldY;
-      oldX = currentX;
-      oldY = currentY;
+      int tailX = this.tail.get( this.tail.size() - 1 ).x; 
+      int tailY = this.tail.get( this.tail.size() - 1 ).y; 
+
+      if( this.tailPlus != 0 )
+        this.tailPlus--;
+      else{
+        this.tail.remove( this.tail.size() - 1 );
+        a[ tailY ][ tailX ] = '0';
+      }
+      this.tail.add( 0, new Tail(newX, newY) );
+      
+      if( this.checkCollizion() ){
+        showMatrix();
+        return;
+      }
+
+      a[ newY ][ newX ] = 'X';
+      
+      this.checkFood();
+
+      // this mean that a change of movement cannot be undone
+      this.dirIsChanged = false;
+
     }
-
-    if( this.tailPlus != 0 ){
-      this.add( this.oldX, this.oldY );
-      this.tailPlus--;
-    }
-
-    if( snakeChangeDir )
-      snakeChangeDir = false;
-    this.teleport();
-    this.checkFood();
-
-    if( this.checkCollision() ){
-      print("Fuck !!!!!!   ");
-      score.resetScore();
-    }
-    this.Show();
+    
+    this.show();
   }
 
-  public void Show(){
-    for(int i = 0; i < this.tail.size(); i++){
+  public void show(){
+    for(int i = 0; i < this.tail.size(); i++ ){
       stroke( 20 );
       strokeWeight(1);
-      if(i == 0) fill( 0 );
-      else fill( 7 );
-      rect(this.tail.get(i).x, this.tail.get(i).y, this.scale, this.scale);
+      if(i == 0)
+        fill( 0 );
+      else
+        fill( 7 );
+      rect( this.tail.get(i).x * sc , this.tail.get(i).y * sc, sc, sc );
     }
   }
-
-  private boolean checkCollision(){
+  
+  private boolean checkCollizion(){
     int headX = this.tail.get(0).x;
     int headY = this.tail.get(0).y;
-    
+
+    if( headX > 31 || headX < 0 || headY < 1 || headY > 24)
+      return true;
+
     for(int i = 1; i < this.tail.size(); i++)
-      if(headX == this.tail.get(i).x && headY == this.tail.get(i).y){
-        this.tail.subList(i, this.tail.size()).clear();
+      if( headX == this.tail.get(i).x && headY == this.tail.get(i).y )
         return true;
-      }
     return false;
   }
 
-  public void add(int x, int y){
-    this.tail.add( new Tail(x, y) );
+  private void changeDirection(int dirX, int dirY){
+    if( !this.dirIsChanged ){
+      this.directionX = dirX;
+      this.directionY = dirY;
+      this.dirIsChanged = true;
+    }
+  }
+
+  private void checkFood(){
+    int headX = this.tail.get(0).x;
+    int headY = this.tail.get(0).y;
+    
+  
+    if( !food.bonus ){
+      if( headX == food.x && headY == food.y ){
+        this.tailPlus += 1;
+        food.put();
+      }
+    } else {
+      if( ( headX == food.x || headX == food.x + 1 ) && ( headY == food.y || headY == food.y + 1 ) ){
+        this.tailPlus += 3;
+        food.put();
+      }
+    }
+    
   }
 
   public int getDirX(){
@@ -77,68 +109,4 @@ public class Snake{
     return this.directionY;
   }
 
-  public void direction(String s){
-    if(s == "LEFT"){
-      this.directionX = -1;
-      this.directionY = 0;
-    } else if(s == "UP") {
-      this.directionX = 0;
-      this.directionY = -1;
-    } else if(s == "RIGHT"){
-      this.directionX = 1;
-      this.directionY = 0;
-    } else if(s == "DOWN"){
-      this.directionX = 0;
-      this.directionY = 1;
-    }
-    
-  }
-  
-  public void teleport(){
-    int x = this.tail.get(0).x;
-    int y = this.tail.get(0).y;
-
-    if(x >= width)
-      this.tail.get(0).x = 0;
-    else if(x < 0) 
-      this.tail.get(0).x = width - 20;
-    if(y >= height)
-      this.tail.get(0).y = 0;
-    else if(y < 20)
-      this.tail.get(0).y = height - 20;
-
-  }
-
-  private boolean checkFood(){
-    int x = this.tail.get(0).x;
-    int y = this.tail.get(0).y;
-
-    if( (x == food.x || x == food.x + 20 && food.bigFood) && (y == food.y || y == food.y + 20 && food.bigFood) ){
-
-      if( !food.bigFood ){
-        this.tailPlus += 1;
-        score.addScore( 3 );
-      }
-      else {
-        this.tailPlus += 3;
-        score.addScore( 7 );
-      }
-      
-      
-      food.put();
-      return true;
-    }
-    return false;
-  }
-
-  public void reset(){
-    this.tail.clear();
-    add(20, 20);
-  }
-  
-
 }
-
-
-
-
