@@ -2,12 +2,14 @@ public class Food{
   private int x = 1, y = 1;
   public boolean bonus = false;
   private int bonusCount = 0;
+  private int countDown = 0;
 
   public void put(){
     a[ this.y ][ this.x ] = '0';
 
     if( this.bonus ){
       this.bonus = false;
+      this.countDown = 0;
       a[ this.y + 1 ][ this.x ] = '0';
       a[ this.y + 1 ][ this.x + 1 ] = '0';
       a[ this.y ][ this.x + 1 ] = '0';
@@ -17,6 +19,7 @@ public class Food{
     
     if(this.bonusCount == 9){
       this.bonus = true;
+      this.countDown = (int)frameRate * 6;
       this.bonusCount = 1;
     }
 
@@ -40,6 +43,12 @@ public class Food{
   }
 
   public void update(){
+    if( this.countDown != 0 )
+      this.countDown--;
+    else if ( this.bonus ){
+      this.bonus = false;
+      this.put();
+    }
     this.show();
   }
  

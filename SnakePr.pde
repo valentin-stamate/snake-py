@@ -1,11 +1,12 @@
 import java.util.ArrayList;
 import java.util.List;
-import processing.sound.*;
+//import processing.sound.*;
 
 static int sc = 20;
 
 Snake snake;
 Food food;
+Score score;
 
 void setup(){
   size(640, 500);// + 21 for topbar
@@ -14,6 +15,8 @@ void setup(){
 
   snake = new Snake();
   food = new Food();
+  score = new Score();
+
   food.put();
 
 }
@@ -21,9 +24,10 @@ void setup(){
 void draw(){
   background( 20 );
   topBar();
+
   food.update();
   snake.update();
-  
+  score.update();
 }
 
 void representMatrix(){
@@ -66,5 +70,3 @@ void topBar(){
   fill( 15 );
   rect(0, 0, width, 21);
 }
-
-

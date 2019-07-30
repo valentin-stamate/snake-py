@@ -3,35 +3,36 @@ public class Score{
   private int scorePlus = 0;
   private int maxScore = 0;
   private int lifes = 3;
-  public void Update(){
+
+  public void update(){
 
     if( this.scorePlus != 0 ){
       this.score++;
       this.scorePlus--;
     }
 
-    this.Show();
+    this.show();
   }
 
-  public void Show(){
+  public void show(){
   
     textSize(11);
     fill(255);
     text( "Score : " + this.score, 5, 14);
 
-    textSize(11);
-    fill(255);
-    text( "MaxScore : " + this.maxScore, 80, 14);
+    //textSize(11);
+    //fill(255);
+    //text( "MaxScore : " + this.maxScore, 80, 14);
   
-    textSize(11);
-    fill(255);
-    text( "Lifes : ", 170, 14);
+    //textSize(11);
+    //fill(255);
+    //text( "Lifes : ", 170, 14);
 
-    for(int i = 0; i < this.lifes; i++){
-      strokeWeight(0);
-      fill( 255 );
-      rect( 205 + i * 13, 6, 9, 9 );
-    }
+    //for(int i = 0; i < this.lifes; i++){
+    //  strokeWeight(0);
+    //  fill( 255 );
+    //  rect( 205 + i * 13, 6, 9, 9 );
+    //}
   }
 
   public void addScore(int n){
