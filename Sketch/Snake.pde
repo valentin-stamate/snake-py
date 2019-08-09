@@ -2,6 +2,8 @@ public class Snake{
   private List<Cell> tail;
   private int directionX, directionY, tailPlus;
   public boolean dirIsChanged;
+  private boolean isDead, isInvincible;
+  private int invincibleCountDown;
 
   Snake(){
     tail = new ArrayList<Cell>();
@@ -18,11 +20,20 @@ public class Snake{
     this.dirIsChanged = false;
     this.directionX = 1;
     this.directionY = 0;
+    this.isDead = false;
+    this.isInvincible = false;
   }
 
   public void Update(){
     // every five frames do:
     if( frameCount % GameUpdate == 0 ){
+
+      if(this.isInvincible){
+        this.invincibleCountDown --;
+        if(this.invincibleCountDown == 0){
+          this.isInvincible = false;
+        }
+      }
 
       // get the first, last, next(head) cell
       Cell head = this.tail.get(0);
@@ -45,10 +56,9 @@ public class Snake{
           else nextCell = array.get( 0 ).get( head.j );
         }
       }
-      // check snake collizion
-      if( this.checkTailCollizion( nextCell ) ){
-        //score.resetScore();
-        noLoop();
+      // check snake collizion when is not invincible
+      if( !this.isInvincible && this.checkTailCollizion( nextCell ) ){
+        this.isDead = true;
         return;
       }
 
@@ -74,15 +84,23 @@ public class Snake{
     for(Cell c : this.tail){
       stroke( 25 );
       strokeWeight(1);
-      if( c == this.tail.get(0) )
-        c.Show(0, 0, 0);
-      else
-        c.Show(15, 15, 15);
+      if(this.isInvincible){
+        if( c == this.tail.get(0) )
+          c.Show(0, 0, 0, 150);
+        else
+          c.Show(15, 15, 15, 150);
+      }
+      else {
+        if( c == this.tail.get(0) )
+          c.Show(0, 0, 0);
+        else
+          c.Show(15, 15, 15);
+      }
     }
   }
 
   private boolean checkTailCollizion(Cell c){
-    return this.tail.contains(c) ? true : false;
+    return this.tail.contains(c) || c.isWall ? true : false;
   }
 
   private void changeDirection(int dirX, int dirY){
@@ -105,8 +123,13 @@ public class Snake{
     return this.directionY;
   }
 
-  public void addTail(){
-    this.tailPlus++;// nice
+  public void addTail(int n){
+    this.tailPlus += n;
+  }
+
+  public void makeInvincible(){
+    this.invincibleCountDown = (60 / GameUpdate) * 12;// math stuff, 12 seconds
+    this.isInvincible = true;
   }
 
 }

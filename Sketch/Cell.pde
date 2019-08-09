@@ -14,4 +14,11 @@ class Cell{
     rect( this.j * sc, (this.i + 1) * sc, sc, sc );
   }
 
+  public void Show(int r, int g, int b, int alpha){
+    stroke( 25 );
+    strokeWeight(1);
+    fill(r, g, b, alpha);
+    rect( this.j * sc, (this.i + 1) * sc, sc, sc );
+  }
+
 }

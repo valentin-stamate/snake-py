@@ -6,9 +6,11 @@ static int GameUpdate = 6;
 int rows, cols;
 
 List< List<Cell> > array;
+List<Cell> walls;
 
 Snake snake;
 Food food;
+Score score;
 
 void setup(){
   size(640, 500);
@@ -22,15 +24,42 @@ void setup(){
 void draw(){
   background( 25 );
   topBar();
-  food.Show();
+
+  // draw the walls
+  for(Cell c : walls){
+    c.Show(0, 70, 90);
+  }
+
+  food.Update();
   snake.Update();
+  score.Update();
 
   // here is checking for interractions
   if(frameCount % GameUpdate == 0){
     if( snake.checkFood( food.currentLocation ) ){
-      snake.addTail();
+      // check what type of food snake is eating
+      if(food.normalFood){
+        snake.addTail(1);
+        score.addScore(7);
+      }
+      else if(food.greenFood){
+        snake.addTail(4);
+        score.addScore(21);
+      }
+      else if(food.purpleFood){
+        snake.makeInvincible();
+        score.addScore(9);
+      }
+
       food.newFood();
     }
+
+    if( snake.isDead ){
+      score.resetScore();
+      snake = new Snake();
+      food = new Food();
+    }
+
   }
 }
 
@@ -63,6 +92,25 @@ void initialize(){
     }
   }
 
+  walls = new ArrayList<Cell>();
+
+  // TODO make an array for walls
+  for(int j = 0; j < cols; j++){
+    walls.add(array.get(0).get(j));
+  }
+  for(int j = 0; j < cols; j++){
+    walls.add(array.get(rows - 1).get(j));
+  }
+  for(int i = 1; i < rows; i++){
+    walls.add(array.get(i).get(0));
+  }
+  for(int i = 1; i < rows; i++){
+    walls.add(array.get(i).get(cols - 1));
+  }
+  for(Cell c : walls)
+    c.isWall = true;
+
   snake = new Snake();
   food = new Food();
+  score = new Score();
 }
